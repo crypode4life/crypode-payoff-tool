@@ -1,779 +1,918 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Debt Payoff Planner - Crypode</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --gold: #D4AF37;
-            --dark: #0A0E27;
-            --darker: #050812;
-            --text: #E8E8E8;
-            --accent: #1a1f3a;
-            --success: #10B981;
-            --warning: #F59E0B;
-            --error: #EF4444;
-        }
-
-        body {
-            background: linear-gradient(135deg, var(--darker) 0%, var(--dark) 100%);
-            color: var(--text);
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            line-height: 1.6;
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        header {
-            text-align: center;
-            margin-bottom: 40px;
-            padding-top: 20px;
-        }
-
-        header h1 {
-            color: var(--gold);
-            font-size: 2.5em;
-            margin-bottom: 10px;
-            text-shadow: 0 2px 10px rgba(212, 175, 55, 0.3);
-        }
-
-        header p {
-            color: var(--text);
-            font-size: 1.1em;
-            opacity: 0.9;
-        }
-
-        .crypode-credit {
-            text-align: center;
-            margin-top: 10px;
-            font-size: 0.9em;
-            color: var(--gold);
-            opacity: 0.7;
-        }
-
-        .crypode-credit a {
-            color: var(--gold);
-            text-decoration: none;
-            border-bottom: 1px dashed var(--gold);
-        }
-
-        .layout {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            margin-bottom: 30px;
-        }
-
-        @media (max-width: 900px) {
-            .layout {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .card {
-            background: var(--accent);
-            border: 1px solid var(--gold);
-            border-radius: 12px;
-            padding: 30px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-        }
-
-        .card h2 {
-            color: var(--gold);
-            margin-bottom: 25px;
-            font-size: 1.5em;
-            border-bottom: 2px solid var(--gold);
-            padding-bottom: 15px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        label {
-            display: block;
-            color: var(--gold);
-            font-weight: 600;
-            margin-bottom: 8px;
-            font-size: 0.95em;
-        }
-
-        input[type="number"],
-        input[type="text"],
-        select {
-            width: 100%;
-            padding: 12px;
-            background: var(--darker);
-            border: 1px solid var(--gold);
-            color: var(--text);
-            border-radius: 8px;
-            font-size: 1em;
-            transition: all 0.3s ease;
-        }
-
-        input[type="number"]:focus,
-        input[type="text"]:focus,
-        select:focus {
-            outline: none;
-            border-color: var(--gold);
-            box-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
-            background: rgba(10, 14, 39, 0.8);
-        }
-
-        .input-group {
-            display: grid;
-            grid-template-columns: 1fr auto;
-            gap: 10px;
-            align-items: end;
-        }
-
-        .currency-toggle {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
-        }
-
-        .currency-btn {
-            flex: 1;
-            padding: 10px;
-            background: var(--darker);
-            border: 1px solid var(--gold);
-            color: var(--text);
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 600;
-        }
-
-        .currency-btn.active {
-            background: var(--gold);
-            color: var(--darker);
-        }
-
-        .checkbox-group {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin: 15px 0;
-        }
-
-        input[type="checkbox"] {
-            width: 20px;
-            height: 20px;
-            cursor: pointer;
-            accent-color: var(--gold);
-        }
-
-        .checkbox-group label {
-            margin-bottom: 0;
-            cursor: pointer;
-        }
-
-        .debt-item {
-            background: var(--darker);
-            border: 1px solid var(--gold);
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 15px;
-            position: relative;
-        }
-
-        .debt-item input {
-            margin-bottom: 10px;
-        }
-
-        .remove-debt {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: var(--error);
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.85em;
-        }
-
-        .remove-debt:hover {
-            background: #dc2626;
-        }
-
-        .button-group {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-top: 20px;
-        }
-
-        .button-group.full {
-            grid-template-columns: 1fr;
-        }
-
-        button {
-            padding: 14px 24px;
-            background: var(--gold);
-            color: var(--darker);
-            border: none;
-            border-radius: 8px;
-            font-size: 1em;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        button:hover {
-            background: #E8C547;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(212, 175, 55, 0.4);
-        }
-
-        button:active {
-            transform: translateY(0);
-        }
-
-        .btn-secondary {
-            background: var(--accent);
-            color: var(--gold);
-            border: 2px solid var(--gold);
-        }
-
-        .btn-secondary:hover {
-            background: var(--gold);
-            color: var(--darker);
-        }
-
-        .strategy-selector {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 10px;
-            margin-top: 10px;
-        }
-
-        .strategy-card {
-            padding: 12px;
-            background: var(--darker);
-            border: 2px solid var(--gold);
-            border-radius: 8px;
-            cursor: pointer;
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-
-        .strategy-card.selected {
-            background: var(--gold);
-            color: var(--darker);
-        }
-
-        .strategy-card:hover {
-            box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
-        }
-
-        .strategy-card small {
-            display: block;
-            font-size: 0.8em;
-            opacity: 0.7;
-            margin-top: 5px;
-        }
-
-        .results-section {
-            grid-column: 1 / -1;
-        }
-
-        .plan-container {
-            max-height: 600px;
-            overflow-y: auto;
-        }
-
-        .plan-summary {
-            background: var(--darker);
-            border-left: 4px solid var(--gold);
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-
-        .plan-summary h3 {
-            color: var(--gold);
-            margin-bottom: 10px;
-        }
-
-        .summary-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-bottom: 10px;
-        }
-
-        .summary-item {
-            color: var(--text);
-            font-size: 0.95em;
-        }
-
-        .summary-label {
-            color: var(--gold);
-            font-weight: 600;
-        }
-
-        .payment-schedule {
-            margin-top: 20px;
-        }
-
-        .payment-schedule h3 {
-            color: var(--gold);
-            margin-bottom: 15px;
-        }
-
-        .payment-month {
-            background: var(--darker);
-            border: 1px solid var(--gold);
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            font-size: 0.9em;
-        }
-
-        .payment-month.paid {
-            opacity: 0.6;
-            border-color: var(--success);
-        }
-
-        .payment-debt {
-            display: grid;
-            grid-template-columns: 1fr auto auto;
-            gap: 10px;
-            margin: 8px 0;
-            align-items: center;
-        }
-
-        .debt-name {
-            color: var(--gold);
-            font-weight: 600;
-        }
-
-        .debt-amount {
-            text-align: right;
-        }
-
-        .islamic-note {
-            background: rgba(16, 185, 129, 0.1);
-            border-left: 4px solid var(--success);
-            padding: 12px;
-            border-radius: 6px;
-            margin: 15px 0;
-            font-size: 0.9em;
-            color: var(--text);
-        }
-
-        .islamic-note strong {
-            color: var(--success);
-        }
-
-        .loading {
-            text-align: center;
-            color: var(--gold);
-            padding: 40px;
-            font-size: 1.1em;
-        }
-
-        .spinner {
-            display: inline-block;
-            width: 30px;
-            height: 30px;
-            border: 3px solid var(--accent);
-            border-top-color: var(--gold);
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            margin-right: 10px;
-            vertical-align: middle;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        .error {
-            background: rgba(239, 68, 68, 0.1);
-            border-left: 4px solid var(--error);
-            padding: 15px;
-            border-radius: 6px;
-            color: #FECACA;
-            margin: 15px 0;
-        }
-
-        .success {
-            background: rgba(16, 185, 129, 0.1);
-            border-left: 4px solid var(--success);
-            padding: 15px;
-            border-radius: 6px;
-            color: #DBEAFE;
-            margin: 15px 0;
-        }
-
-        .action-buttons {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 10px;
-            margin-top: 20px;
-        }
-
-        @media (max-width: 600px) {
-            .action-buttons {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .small-btn {
-            padding: 10px 16px;
-            font-size: 0.9em;
-        }
-
-        footer {
-            text-align: center;
-            margin-top: 40px;
-            padding-top: 20px;
-            border-top: 1px solid var(--accent);
-            color: var(--text);
-            opacity: 0.7;
-        }
-
-        footer a {
-            color: var(--gold);
-            text-decoration: none;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Free debt payoff planner for Gulf professionals. Add all your loans and cards, compare Snowball, Avalanche and Balanced strategies, and get a month-by-month plan. Islamic financing supported.">
+<title>Debt Payoff Planner — Crypode</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #C9A84C;
+    --gold-light: #E8C97A;
+    --gold-dark: #A07830;
+    --dark: #0D0D0D;
+    --dark-2: #141414;
+    --dark-3: #1C1C1C;
+    --cream: #F5F0E8;
+    --cream-soft: #EDE8DF;
+    --paper: #F7F3EA;
+    --text-dark: #20201D;
+    --text-mid: #4A4845;
+    --text-muted: #888880;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--dark);
+    color: var(--cream);
+    font-family: 'Tajawal', sans-serif;
+    font-weight: 400;
+    overflow-x: hidden;
+  }
+
+  /* NOISE TEXTURE */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.35;
+  }
+
+  /* NAVIGATION */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 18px 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(13,13,13,0.96);
+    border-bottom: 1px solid rgba(201,168,76,0.12);
+    backdrop-filter: blur(12px);
+  }
+
+  .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    color: var(--gold);
+    letter-spacing: 2px;
+    text-decoration: none;
+  }
+  .logo span { color: var(--cream); font-style: italic; }
+
+  nav ul { list-style: none; display: flex; gap: 32px; align-items: center; }
+  nav ul a {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.82rem;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-weight: 500;
+    transition: color 0.3s;
+  }
+  nav ul a:hover { color: var(--gold); }
+
+  /* HERO */
+  .hero {
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+    padding: 120px 48px 80px;
+    position: relative;
+    overflow: hidden;
+    background: var(--dark);
+    margin-top: 0;
+  }
+
+  .hero-bg {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 80% 50%, rgba(201,168,76,0.07) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 60% at 10% 80%, rgba(201,168,76,0.04) 0%, transparent 60%);
+  }
+
+  .hero-content {
+    max-width: 600px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .eyebrow {
+    display: inline-block;
+    font-size: 0.7rem;
+    letter-spacing: 3.5px;
+    text-transform: uppercase;
+    color: var(--gold);
+    border: 1px solid rgba(201,168,76,0.3);
+    padding: 6px 16px;
+    margin-bottom: 36px;
+    border-radius: 1px;
+  }
+
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 4.5vw, 3.2rem);
+    line-height: 1.15;
+    color: var(--cream);
+    margin-bottom: 12px;
+    font-weight: 700;
+  }
+
+  .hero h1 .sub {
+    display: block;
+    font-size: 1.2rem;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--gold);
+    margin-top: 8px;
+  }
+
+  .hero p {
+    font-size: 1.1rem;
+    color: var(--cream-soft);
+    line-height: 1.6;
+    margin-bottom: 24px;
+  }
+
+  /* MAIN CONTENT */
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 48px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .tool-section {
+    padding: 80px 48px;
+    background: var(--dark);
+  }
+
+  .tool-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    margin-top: 60px;
+  }
+
+  @media (max-width: 900px) {
+    .tool-grid { grid-template-columns: 1fr; gap: 40px; }
+  }
+
+  .tool-card {
+    background: var(--dark-3);
+    border: 1px solid rgba(201,168,76,0.2);
+    border-radius: 2px;
+    padding: 40px;
+    position: relative;
+  }
+
+  .tool-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, var(--gold), transparent);
+  }
+
+  .tool-card h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    color: var(--cream);
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(201,168,76,0.15);
+  }
+
+  .form-group {
+    margin-bottom: 24px;
+  }
+
+  label {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--gold);
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+  }
+
+  input[type="text"],
+  input[type="number"],
+  input[type="email"],
+  select,
+  textarea {
+    width: 100%;
+    padding: 12px 14px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(201,168,76,0.15);
+    color: var(--cream);
+    font-family: 'Tajawal', sans-serif;
+    font-size: 0.95rem;
+    border-radius: 2px;
+    transition: all 0.3s;
+  }
+
+  input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--gold);
+    background: rgba(201,168,76,0.08);
+    box-shadow: 0 0 12px rgba(201,168,76,0.1);
+  }
+
+  .section-title {
+    font-size: 0.75rem;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 600;
+    margin: 32px 0 16px 0;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(201,168,76,0.2);
+  }
+
+  .strategy-group {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin: 16px 0 24px 0;
+  }
+
+  .strategy-btn {
+    padding: 12px;
+    background: rgba(201,168,76,0.08);
+    border: 1px solid rgba(201,168,76,0.2);
+    color: var(--cream);
+    border-radius: 2px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.3s;
+  }
+
+  .strategy-btn:hover {
+    background: rgba(201,168,76,0.15);
+    border-color: var(--gold);
+  }
+
+  .strategy-btn.active {
+    background: var(--gold);
+    color: var(--dark);
+    border-color: var(--gold);
+  }
+
+  .checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(201,168,76,0.15);
+    border-radius: 2px;
+    cursor: pointer;
+  }
+
+  .checkbox-group input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: var(--gold);
+  }
+
+  .checkbox-group label {
+    margin: 0;
+    cursor: pointer;
+    text-transform: none;
+    color: var(--cream);
+    font-weight: 400;
+  }
+
+  .btn-primary {
+    width: 100%;
+    padding: 14px 24px;
+    background: var(--gold);
+    color: var(--dark);
+    border: none;
+    border-radius: 2px;
+    font-family: 'Tajawal', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-top: 16px;
+  }
+
+  .btn-primary:hover {
+    background: var(--gold-light);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(201,168,76,0.2);
+  }
+
+  .btn-secondary {
+    background: transparent;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+  }
+
+  .btn-secondary:hover {
+    background: var(--gold);
+    color: var(--dark);
+  }
+
+  /* RESULTS */
+  .result-box {
+    background: rgba(201,168,76,0.08);
+    border: 1px solid rgba(201,168,76,0.2);
+    border-radius: 2px;
+    padding: 28px;
+    margin: 28px 0;
+    min-height: 100px;
+  }
+
+  .result-box h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    color: var(--gold);
+    margin-bottom: 20px;
+  }
+
+  .result-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(201,168,76,0.1);
+    font-size: 0.95rem;
+  }
+
+  .result-item:last-child {
+    border-bottom: none;
+  }
+
+  .result-label {
+    color: var(--text-muted);
+  }
+
+  .result-value {
+    color: var(--gold);
+    font-weight: 600;
+  }
+
+  .schedule-table {
+    width: 100%;
+    margin-top: 24px;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+  }
+
+  .schedule-table th {
+    background: rgba(201,168,76,0.1);
+    color: var(--gold);
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid rgba(201,168,76,0.2);
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .schedule-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid rgba(201,168,76,0.08);
+    color: var(--cream-soft);
+  }
+
+  .schedule-table tr:hover {
+    background: rgba(201,168,76,0.05);
+  }
+
+  .placeholder {
+    color: var(--text-muted);
+    text-align: center;
+    padding: 60px 20px;
+    font-style: italic;
+  }
+
+  /* FOOTER */
+  footer {
+    background: var(--dark-2);
+    padding: 48px;
+    border-top: 1px solid rgba(201,168,76,0.12);
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+  }
+
+  footer a {
+    color: var(--gold);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+
+  footer a:hover { color: var(--gold-light); }
+
+  .error { color: #ff6b6b; background: rgba(255,107,107,0.1); padding: 12px; border-left: 3px solid #ff6b6b; margin: 16px 0; border-radius: 2px; }
+  .success { color: var(--gold); background: rgba(201,168,76,0.1); padding: 12px; border-left: 3px solid var(--gold); margin: 16px 0; border-radius: 2px; }
+
+  @media (max-width: 768px) {
+    nav { padding: 14px 24px; }
+    nav ul { gap: 16px; }
+    .hero { padding: 100px 24px 60px; }
+    .tool-section { padding: 60px 24px; }
+    .container { padding: 0 24px; }
+    .tool-grid { grid-template-columns: 1fr; }
+    .strategy-group { grid-template-columns: 1fr; }
+  }
+
+  /* ── Shared tool components ── */
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .form-row.three { grid-template-columns: 1fr 1fr 1fr; }
+  @media (max-width: 560px) { .form-row, .form-row.three { grid-template-columns: 1fr; } }
+  .hint { display: block; font-size: 0.8rem; color: var(--text-muted); margin-top: 6px; line-height: 1.5; text-transform: none; letter-spacing: 0; font-weight: 400; }
+  .big-figure { font-family: 'Playfair Display', serif; font-size: 2.2rem; color: var(--gold); margin: 4px 0 6px; line-height: 1.15; }
+  .big-sub { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 18px; }
+  .note-list { margin: 0; padding-inline-start: 20px; color: var(--cream-soft); font-size: 0.88rem; line-height: 1.65; }
+  .note-list li { margin-bottom: 8px; }
+  .note-list li.warn { color: #E8C97A; }
+  .result-item .result-label small { display: block; font-size: 0.78rem; color: var(--text-muted); margin-top: 2px; }
+  .result-item.excluded .result-value { color: var(--text-muted); text-decoration: line-through; }
+  .result-actions { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+  .result-actions .btn-primary { flex: 1 1 140px; margin: 0; }
+  .table-scroll { max-height: 380px; overflow: auto; border: 1px solid rgba(201,168,76,0.15); margin-top: 12px; }
+  .table-scroll .schedule-table { margin: 0; }
+  .schedule-table th { position: sticky; top: 0; background: var(--dark-3); }
+  .schedule-table td.num, .schedule-table th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  .schedule-table tr.chosen td { color: var(--gold); font-weight: 600; }
+  .link-btn { background: none; border: 1px dashed rgba(201,168,76,0.4); color: var(--gold); padding: 10px 14px; width: 100%; cursor: pointer; font-family: inherit; font-size: 0.8rem; letter-spacing: 1.5px; text-transform: uppercase; border-radius: 2px; margin-bottom: 8px; }
+  .link-btn:hover { background: rgba(201,168,76,0.06); }
+  @media print {
+    #cpPrintSheet .big-figure { font-size: 20pt; color: #A07830 !important; }
+    #cpPrintSheet .big-sub { font-size: 9pt; color: #555 !important; margin-bottom: 10px; }
+    #cpPrintSheet .note-list { padding-left: 18px; font-size: 9.5pt; }
+    #cpPrintSheet .result-item .result-label small { font-size: 8.5pt; color: #666 !important; }
+    #cpPrintSheet .result-item.excluded .result-value { text-decoration: line-through; color: #888 !important; }
+    #cpPrintSheet .table-scroll { max-height: none; overflow: visible; border: 0; }
+    #cpPrintSheet .schedule-table { width: 100%; border-collapse: collapse; font-size: 8.5pt; }
+    #cpPrintSheet .schedule-table th, #cpPrintSheet .schedule-table td { border-bottom: 1px solid #e5e5e5; padding: 3px 6px; text-align: left; }
+    #cpPrintSheet .schedule-table .num { text-align: right; }
+    #cpPrintSheet .schedule-table tr.chosen td { font-weight: 700; }
+  }
+
+  .debt-row { position: relative; border: 1px solid rgba(201,168,76,0.15); background: rgba(255,255,255,0.02); padding: 16px 16px 4px; margin-bottom: 12px; }
+  .debt-row .form-group { margin-bottom: 12px; }
+  .debt-row .row-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .debt-row .row-num { font-size: 0.7rem; letter-spacing: 2.5px; text-transform: uppercase; color: var(--gold); }
+  .debt-row .remove { background: none; border: 0; color: var(--text-muted); cursor: pointer; font-size: 0.8rem; font-family: inherit; }
+  .debt-row .remove:hover { color: #E07A6A; }
+  .strategy-desc { font-size: 0.85rem; color: var(--text-muted); margin: -4px 0 20px; line-height: 1.55; min-height: 2.6em; }
+  .min-total { font-size: 0.85rem; color: var(--text-muted); margin-top: 6px; }
+  .min-total strong { color: var(--cream); }
+  .order-list { list-style: none; margin: 0; padding: 0; counter-reset: ord; }
+  .order-list li { counter-increment: ord; display: flex; justify-content: space-between; gap: 10px; padding: 10px 0; border-bottom: 1px solid rgba(201,168,76,0.1); color: var(--cream-soft); }
+  .order-list li::before { content: counter(ord); color: var(--dark); background: var(--gold); width: 22px; height: 22px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; margin-right: 10px; flex: none; }
+  .order-list li span:first-of-type { flex: 1; }
+  .order-list li .when { color: var(--gold); white-space: nowrap; }
+  @media print {
+    #cpPrintSheet .order-list li { border-bottom: 1px solid #eee; padding: 5px 0; }
+    #cpPrintSheet .order-list li::before { background: #C9A84C !important; color: #fff !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+  /* ── Print / Save as PDF ── */
+  .result-actions { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+  .result-actions .btn-primary { flex: 1 1 140px; margin: 0; }
+  #cpPrintSheet { display: none; }
+  @media print {
+    @page { margin: 16mm 16mm 18mm; }
+    body.cp-printing { background: #fff !important; }
+    body.cp-printing::before { display: none !important; }
+    body.cp-printing > *:not(#cpPrintSheet) { display: none !important; }
+    body.cp-printing #cpPrintSheet { display: block; font-family: 'Tajawal', Arial, sans-serif; font-size: 11pt; line-height: 1.55; }
+    #cpPrintSheet * { color: #1a1a1a !important; background: transparent !important; box-shadow: none !important; }
+    #cpPrintSheet .cp-head { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1.5px solid #C9A84C; padding-bottom: 10px; margin-bottom: 22px; }
+    #cpPrintSheet .cp-logo { font-family: 'Playfair Display', Georgia, serif; font-size: 22pt; letter-spacing: 1px; line-height: 1; }
+    #cpPrintSheet .cp-logo .g { color: #A07830 !important; }
+    #cpPrintSheet .cp-logo .i { font-style: italic; }
+    #cpPrintSheet .cp-meta { text-align: right; font-size: 9pt; color: #555 !important; }
+    #cpPrintSheet[dir="rtl"] .cp-meta { text-align: left; }
+    #cpPrintSheet .cp-title { font-family: 'Playfair Display', Georgia, serif; font-size: 16pt; margin: 0 0 14px; }
+    #cpPrintSheet .cp-md h2, #cpPrintSheet .cp-md h3, #cpPrintSheet .cp-md h4 { font-family: 'Playfair Display', Georgia, serif; margin: 14px 0 6px; page-break-after: avoid; }
+    #cpPrintSheet .cp-md h2 { font-size: 14pt; } #cpPrintSheet .cp-md h3 { font-size: 12.5pt; } #cpPrintSheet .cp-md h4 { font-size: 11.5pt; }
+    #cpPrintSheet .cp-md p { margin: 0 0 8px; }
+    #cpPrintSheet .cp-md ul { margin: 0 0 8px 20px; padding: 0; }
+    #cpPrintSheet[dir="rtl"] .cp-md ul { margin: 0 20px 8px 0; }
+    #cpPrintSheet .cp-md li { margin-bottom: 3px; }
+    #cpPrintSheet .cp-md hr { border: 0; border-top: 1px solid #ccc; margin: 12px 0; }
+    #cpPrintSheet .result-box { border: 1px solid #ddd; padding: 14px 16px; margin: 0 0 14px; page-break-inside: avoid; }
+    #cpPrintSheet .result-box h3 { font-family: 'Playfair Display', Georgia, serif; font-size: 13pt; margin: 0 0 10px; }
+    #cpPrintSheet .result-item { display: flex; justify-content: space-between; gap: 12px; border-bottom: 1px solid #eee; padding: 6px 0; }
+    #cpPrintSheet .result-value { font-weight: 600; }
+    #cpPrintSheet .result-actions { display: none !important; }
+    #cpPrintSheet .cp-foot { margin-top: 26px; padding-top: 10px; border-top: 1px solid #ddd; font-size: 8.5pt; color: #666 !important; }
+  }
+
+  /* ── Dropdowns: readable on every system (Windows shows option lists on white by default) ── */
+  select { color-scheme: dark; }
+  select option, select optgroup { background-color: #1C1C1C; color: #F5F0E8; }
+  select option:checked { background-color: #C9A84C; color: #0D0D0D; }
+  select option:disabled { color: #888880; }
+</style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>💰 Debt Payoff Planner</h1>
-            <p>Your personalized Islamic-compliant debt elimination strategy</p>
-            <div class="crypode-credit">
-                Part of <a href="https://crypode.com" target="_blank">Crypode</a> — Gulf professional finance
-            </div>
-        </header>
 
-        <div class="layout">
-            <!-- Input Section -->
-            <div class="card">
-                <h2>Your Financial Details</h2>
+<!-- NAVIGATION -->
+<nav>
+  <a href="https://crypode.com" class="logo">Cry<span>pode</span></a>
+  <ul>
+    <li><a href="https://crypode.com#tools">Tools</a></li>
+    <li><a href="https://crypode.ghost.io" target="_blank">Blog</a></li>
+    <li><a href="https://crypode.com#about">About</a></li>
+  </ul>
+</nav>
 
-                <!-- Currency Selection -->
-                <div class="form-group">
-                    <label>Currency</label>
-                    <div class="currency-toggle">
-                        <button type="button" class="currency-btn active" data-currency="OMR">OMR (Oman)</button>
-                        <button type="button" class="currency-btn" data-currency="USD">USD</button>
-                        <button type="button" class="currency-btn" data-currency="AED">AED (UAE)</button>
-                        <button type="button" class="currency-btn" data-currency="SAR">SAR (Saudi)</button>
-                    </div>
-                </div>
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-content">
+    <div class="eyebrow">✦ Free Financial Tool</div>
+    <h1>Debt Payoff <span class="sub">Planner</span></h1>
+    <p>Add every loan and card, set what you can pay each month, and see exactly when you’ll be debt-free, with Snowball, Avalanche and Balanced strategies compared side by side.</p>
+  </div>
+</section>
 
-                <!-- Monthly Income -->
-                <div class="form-group">
-                    <label>Monthly Net Income</label>
-                    <div class="input-group">
-                        <input type="number" id="monthlyIncome" placeholder="2500" min="0" step="100">
-                        <span id="currencyDisplay">OMR</span>
-                    </div>
-                </div>
-
-                <!-- Islamic Financing Option -->
-                <div class="checkbox-group">
-                    <input type="checkbox" id="islamicMode" checked>
-                    <label for="islamicMode">Apply Islamic financing principles (Riba-free)</label>
-                </div>
-
-                <!-- Debts Section -->
-                <div class="form-group">
-                    <label>Your Debts</label>
-                    <div id="debtsList"></div>
-                    <button type="button" class="btn-secondary" style="width: 100%; margin-top: 10px;" onclick="addDebt()">+ Add Another Debt</button>
-                </div>
-
-                <!-- Strategy Selection -->
-                <div class="form-group">
-                    <label>Payoff Strategy</label>
-                    <div class="strategy-selector">
-                        <div class="strategy-card selected" data-strategy="snowball" onclick="selectStrategy(this)">
-                            <strong>Snowball</strong>
-                            <small>Pay smallest debt first</small>
-                        </div>
-                        <div class="strategy-card" data-strategy="avalanche" onclick="selectStrategy(this)">
-                            <strong>Avalanche</strong>
-                            <small>Pay highest interest first</small>
-                        </div>
-                        <div class="strategy-card" data-strategy="balanced" onclick="selectStrategy(this)">
-                            <strong>Balanced</strong>
-                            <small>Hybrid approach</small>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="button-group full">
-                    <button onclick="generatePlan()">Generate My Plan</button>
-                    <button class="btn-secondary" onclick="resetForm()">Reset Form</button>
-                </div>
-            </div>
-
-            <!-- Results Section -->
-            <div class="card results-section">
-                <h2>Your Payoff Plan</h2>
-                <div id="resultsContainer">
-                    <p style="color: var(--text); opacity: 0.7; text-align: center; padding: 40px 0;">
-                        Fill in your details and click "Generate My Plan" to see your personalized strategy.
-                    </p>
-                </div>
-            </div>
+<!-- TOOL SECTION -->
+<section class="tool-section">
+  <div class="container">
+    <div class="tool-grid">
+      <div class="tool-card">
+        <h2>Your Debts</h2>
+        <div class="form-group">
+          <label for="currency">Currency</label>
+          <select id="currency" onchange="refreshLabels()">
+            <option value="OMR">OMR (Omani Rial)</option>
+            <option value="AED">AED (UAE Dirham)</option>
+            <option value="SAR">SAR (Saudi Riyal)</option>
+            <option value="KWD">KWD (Kuwaiti Dinar)</option>
+            <option value="BHD">BHD (Bahraini Dinar)</option>
+            <option value="QAR">QAR (Qatari Riyal)</option>
+            <option value="USD">USD (US Dollar)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <div class="checkbox-group">
+            <input type="checkbox" id="islamicMode" onchange="refreshLabels()">
+            <label for="islamicMode">Islamic financing (show "profit" instead of "interest")</label>
+          </div>
         </div>
 
-        <footer>
-            <p>💡 <strong>Disclaimer:</strong> This planner is for informational purposes only and is not financial or religious advice. Consult with an Islamic finance advisor and financial professional before making decisions. <a href="https://crypode.com/islamic-finance">Learn more</a></p>
-        </footer>
+        <div class="section-title">Debts</div>
+        <div id="debtList"></div>
+        <button type="button" class="link-btn" onclick="addDebt()">+ Add another debt</button>
+
+        <div class="section-title">Your Budget</div>
+        <div class="form-group">
+          <label for="budget">Total you can pay each month</label>
+          <input type="number" id="budget" placeholder="e.g. 600" step="0.001" min="0" inputmode="decimal">
+          <div class="min-total" id="minTotal"></div>
+          <span class="hint">Must cover all the minimum payments. Anything above that goes to your priority debt.</span>
+        </div>
+
+        <div class="section-title">Payoff Strategy</div>
+        <div class="strategy-group">
+          <button type="button" class="strategy-btn active" data-s="snowball" onclick="selectStrategy('snowball')">🏔️ Snowball</button>
+          <button type="button" class="strategy-btn" data-s="avalanche" onclick="selectStrategy('avalanche')">⛰️ Avalanche</button>
+          <button type="button" class="strategy-btn" data-s="balanced" onclick="selectStrategy('balanced')">⚖️ Balanced</button>
+        </div>
+        <p class="strategy-desc" id="strategyDesc"></p>
+
+        <button class="btn-primary" onclick="calculateDebtPayoff()">📊 Calculate Plan</button>
+        <button class="btn-primary btn-secondary" onclick="resetForm()">Reset</button>
+      </div>
+
+      <div class="tool-card">
+        <h2>Your Payoff Plan</h2>
+        <div id="resultsContainer">
+          <p class="placeholder">Add your debts and monthly budget to see your personalised payoff plan</p>
+        </div>
+      </div>
     </div>
+  </div>
+</section>
 
-    <script>
-        let selectedCurrency = 'OMR';
-        let selectedStrategy = 'snowball';
-        let debts = [
-            { id: 1, name: 'Credit Card', amount: 500, rate: 12, type: 'conventional' }
-        ];
-        let nextDebtId = 2;
+<!-- FOOTER -->
+<footer>
+  <p>© 2026 <a href="https://crypode.com">Crypode</a> · Muscat, Oman · Money. Faith. Life in the Gulf.</p>
+  <p style="margin-top:8px;">Built by <a href="https://github.com/myselzstore/crypode-payoff-tool" target="_blank">Fahad Al Rawahi</a></p>
+</footer>
 
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            renderDebts();
-            setupCurrencyButtons();
-        });
+<script>
+/* ── Crypode debt payoff engine ──
+   Each month: add interest/profit to every balance, pay every minimum, then put the rest of the
+   monthly budget on the priority debt. When a debt is cleared its payment rolls into the next. */
+const DebtEngine = (() => {
+  const ORDER = {
+    snowball:  (a, b) => a.balance - b.balance || b.rate - a.rate,                  // smallest balance first
+    avalanche: (a, b) => b.rate - a.rate || a.balance - b.balance,                  // highest rate first
+    balanced:  (a, b) => (b.rate / b.balance) - (a.rate / a.balance) || a.balance - b.balance, // best mix: high rate AND small balance first
+    minimum:   () => 0                                                               // no extra payments
+  };
+  const MAX_MONTHS = 600;
 
-        function setupCurrencyButtons() {
-            document.querySelectorAll('[data-currency]').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    document.querySelectorAll('[data-currency]').forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    selectedCurrency = btn.dataset.currency;
-                    document.getElementById('currencyDisplay').textContent = selectedCurrency;
-                });
-            });
-        }
+  function simulate(debtsIn, budget, strategy) {
+    const debts = debtsIn.map((d, i) => ({ i, name: d.name, balance: +d.balance, rate: +d.rate, min: +d.min, paidOff: null, interest: 0 }));
+    const totalMin = debts.reduce((s, d) => s + d.min, 0);
+    const pay = strategy === 'minimum' ? totalMin : budget;
+    const schedule = [];
+    let month = 0, totalInterest = 0, totalPaid = 0;
 
-        function addDebt() {
-            debts.push({
-                id: nextDebtId++,
-                name: '',
-                amount: 0,
-                rate: 0,
-                type: 'conventional'
-            });
-            renderDebts();
-        }
-
-        function removeDebt(id) {
-            debts = debts.filter(d => d.id !== id);
-            renderDebts();
-        }
-
-        function renderDebts() {
-            const container = document.getElementById('debtsList');
-            container.innerHTML = debts.map(debt => `
-                <div class="debt-item">
-                    <button type="button" class="remove-debt" onclick="removeDebt(${debt.id})">Remove</button>
-                    
-                    <label>Debt Name</label>
-                    <input type="text" placeholder="e.g., Personal Loan, Car Loan" 
-                           value="${debt.name}" 
-                           onchange="updateDebt(${debt.id}, 'name', this.value)">
-                    
-                    <label>Balance (${selectedCurrency})</label>
-                    <input type="number" placeholder="5000" min="0" step="100"
-                           value="${debt.amount}" 
-                           onchange="updateDebt(${debt.id}, 'amount', parseFloat(this.value))">
-                    
-                    <label>Interest Rate (% per year)</label>
-                    <input type="number" placeholder="5" min="0" max="100" step="0.1"
-                           value="${debt.rate}" 
-                           onchange="updateDebt(${debt.id}, 'rate', parseFloat(this.value))">
-                </div>
-            `).join('');
-        }
-
-        function updateDebt(id, field, value) {
-            const debt = debts.find(d => d.id === id);
-            if (debt) debt[field] = value;
-        }
-
-        function selectStrategy(element) {
-            document.querySelectorAll('.strategy-card').forEach(c => c.classList.remove('selected'));
-            element.classList.add('selected');
-            selectedStrategy = element.dataset.strategy;
-        }
-
-        function resetForm() {
-            selectedCurrency = 'OMR';
-            selectedStrategy = 'snowball';
-            debts = [{ id: 1, name: 'Credit Card', amount: 500, rate: 12, type: 'conventional' }];
-            nextDebtId = 2;
-            document.getElementById('monthlyIncome').value = '';
-            document.getElementById('islamicMode').checked = true;
-            document.querySelectorAll('[data-currency]').forEach(btn => btn.classList.remove('active'));
-            document.querySelector('[data-currency="OMR"]').classList.add('active');
-            renderDebts();
-        }
-
-        async function generatePlan() {
-            const income = parseFloat(document.getElementById('monthlyIncome').value);
-            const islamicMode = document.getElementById('islamicMode').checked;
-
-            if (!income || income <= 0) {
-                showError('Please enter your monthly income');
-                return;
-            }
-
-            if (debts.length === 0 || debts.every(d => !d.amount)) {
-                showError('Please add at least one debt');
-                return;
-            }
-
-            const resultsDiv = document.getElementById('resultsContainer');
-            resultsDiv.innerHTML = '<div class="loading"><span class="spinner"></span>Generating your personalized plan...</div>';
-
-            try {
-                const response = await fetch('/api/generate', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        prompt: `Generate a detailed ${selectedStrategy} debt payoff plan in JSON format.
-
-User Details:
-- Monthly Income: ${income} ${selectedCurrency}
-- Currency: ${selectedCurrency}
-- Islamic Financing Mode: ${islamicMode}
-- Strategy: ${selectedStrategy}
-
-Debts:
-${debts.map((d, i) => `${i+1}. ${d.name}: ${d.amount} ${selectedCurrency} at ${d.rate}% annual`).join('\n')}
-
-Return ONLY valid JSON (no markdown, no backticks) with this exact structure:
-{
-  "totalDebt": number,
-  "monthlyPayment": number,
-  "payoffMonths": number,
-  "totalInterest": number,
-  "summary": "1-2 sentence summary",
-  "strategy_explanation": "Explanation of the chosen strategy in context of their debts",
-  "months": [
-    {
-      "month": 1,
-      "debtsPaid": [
-        { "name": "Debt Name", "payment": number, "remaining": number }
-      ],
-      "totalPayment": number,
-      "totalRemaining": number
+    while (debts.some(d => d.balance > 0.005) && month < MAX_MONTHS) {
+      month++;
+      let interestThisMonth = 0;
+      for (const d of debts) if (d.balance > 0.005) { const it = d.balance * d.rate / 100 / 12; d.balance += it; d.interest += it; interestThisMonth += it; }
+      let left = pay, paidThisMonth = 0;
+      // 1) minimums
+      for (const d of debts) if (d.balance > 0.005) { const p = Math.min(d.min, d.balance, left); d.balance -= p; left -= p; paidThisMonth += p; }
+      // 2) extra to priority debts, in strategy order
+      if (strategy !== 'minimum') {
+        const active = debts.filter(d => d.balance > 0.005).sort(ORDER[strategy]);
+        for (const d of active) { if (left <= 0.005) break; const p = Math.min(left, d.balance); d.balance -= p; left -= p; paidThisMonth += p; }
+      }
+      for (const d of debts) if (d.balance <= 0.005 && d.paidOff === null) { d.balance = 0; d.paidOff = month; }
+      totalInterest += interestThisMonth; totalPaid += paidThisMonth;
+      schedule.push({ month, paid: paidThisMonth, interest: interestThisMonth, remaining: debts.reduce((s, d) => s + d.balance, 0), balances: debts.map(d => d.balance) });
+      // Not reducing at all → budget can't cover interest
+      if (month === 1 && paidThisMonth <= interestThisMonth + 0.005) return { error: 'noProgress' };
     }
-  ],
-  "islamicConsiderations": "${islamicMode ? 'Islamic finance advice and considerations' : 'Not applicable'}"
-}`
-                    })
-                });
+    const done = debts.every(d => d.balance <= 0.005);
+    return {
+      done, months: done ? month : null, totalInterest, totalPaid,
+      order: debts.filter(d => d.paidOff).sort((a, b) => a.paidOff - b.paidOff).map(d => ({ name: d.name, month: d.paidOff, interest: d.interest })),
+      schedule
+    };
+  }
 
-                const data = await response.json();
-                
-                // Fix: Find text content block regardless of position
-                const textContent = data.content.find(block => block.type === 'text');
-                if (!textContent || !textContent.text) {
-                    throw new Error('No text content in response');
-                }
-                
-                const responseText = textContent.text.trim().replace(/```json|```/g, '').trim();
-                const plan = JSON.parse(responseText);
+  function validate(debts, budget) {
+    if (!debts.length) return 'noDebts';
+    for (const d of debts) {
+      if (!(d.balance > 0)) return 'balance';
+      if (!(d.rate >= 0)) return 'rate';
+      if (!(d.min > 0)) return 'min';
+    }
+    const totalMin = debts.reduce((s, d) => s + +d.min, 0);
+    if (!(budget >= totalMin - 0.0001)) return 'budget';
+    return null;
+  }
 
-                displayPlan(plan, islamicMode);
-            } catch (e) {
-                console.error('Error:', e);
-                showError('Failed to generate plan. Please try again.');
-            }
-        }
+  function plan(debts, budget, strategy) {
+    const err = validate(debts, budget); if (err) return { error: err };
+    const chosen = simulate(debts, budget, strategy);
+    if (chosen.error) return chosen;
+    const compare = {};
+    for (const s of ['snowball', 'avalanche', 'balanced', 'minimum']) { const r = simulate(debts, budget, s); compare[s] = r.error ? null : { months: r.months, totalInterest: r.totalInterest, done: r.done }; }
+    return { ...chosen, compare, totalMin: debts.reduce((s, d) => s + +d.min, 0) };
+  }
+  return { plan, simulate };
+})();
+</script>
+<script>
+/* ── Crypode print / save-as-PDF ── */
+const CrypodePrint = (() => {
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
-        function displayPlan(plan, islamicMode) {
-            const resultsDiv = document.getElementById('resultsContainer');
-            resultsDiv.innerHTML = `
-                <div class="plan-summary">
-                    <h3>Your Payoff Summary</h3>
-                    <div class="summary-row">
-                        <div class="summary-item">
-                            <span class="summary-label">Total Debt:</span><br>
-                            ${plan.totalDebt.toFixed(2)} ${selectedCurrency}
-                        </div>
-                        <div class="summary-item">
-                            <span class="summary-label">Monthly Payment:</span><br>
-                            ${plan.monthlyPayment.toFixed(2)} ${selectedCurrency}
-                        </div>
-                    </div>
-                    <div class="summary-row">
-                        <div class="summary-item">
-                            <span class="summary-label">Payoff Timeline:</span><br>
-                            ${plan.payoffMonths} months (${(plan.payoffMonths / 12).toFixed(1)} years)
-                        </div>
-                        <div class="summary-item">
-                            <span class="summary-label">Total Interest:</span><br>
-                            ${plan.totalInterest.toFixed(2)} ${selectedCurrency}
-                        </div>
-                    </div>
-                    <p style="margin-top: 15px; color: var(--text);">${plan.summary}</p>
-                </div>
+  // Light markdown → HTML (escaped first, so AI text can never inject HTML)
+  function md(text) {
+    const inline = s => esc(s).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>').replace(/__(.+?)__/g, '<strong>$1</strong>');
+    const out = []; let para = [], list = [];
+    const flushP = () => { if (para.length) { out.push('<p>' + para.join('<br>') + '</p>'); para = []; } };
+    const flushL = () => { if (list.length) { out.push('<ul>' + list.map(li => '<li>' + li + '</li>').join('') + '</ul>'); list = []; } };
+    String(text || '').replace(/\r/g, '').split('\n').forEach(line => {
+      let m;
+      if (!line.trim()) { flushP(); flushL(); }
+      else if (/^\s*(-{3,}|\*{3,}|_{3,})\s*$/.test(line)) { flushP(); flushL(); out.push('<hr>'); }
+      else if ((m = line.match(/^\s*(#{1,4})\s+(.*)$/))) { flushP(); flushL(); const n = Math.min(4, m[1].length + 1); out.push(`<h${n}>${inline(m[2])}</h${n}>`); }
+      else if ((m = line.match(/^\s*(?:[-*•]|\d+[.)])\s+(.*)$/))) { flushP(); list.push(inline(m[1])); }
+      else { flushL(); para.push(inline(line)); }
+    });
+    flushP(); flushL();
+    return '<div class="cp-md">' + out.join('') + '</div>';
+  }
 
-                ${islamicMode ? `<div class="islamic-note">
-                    <strong>🕌 Islamic Finance Note:</strong><br>
-                    ${plan.islamicConsiderations}
-                </div>` : ''}
+  // opts: { title, bodyHtml, branded, dir, lang, disclaimer }
+  function print(opts) {
+    let sheet = document.getElementById('cpPrintSheet');
+    if (!sheet) { sheet = document.createElement('div'); sheet.id = 'cpPrintSheet'; document.body.appendChild(sheet); }
+    const ar = opts.lang === 'ar';
+    const date = new Date().toLocaleDateString(ar ? 'ar-OM' : 'en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+    sheet.setAttribute('dir', opts.dir || 'ltr');
+    sheet.innerHTML =
+      (opts.branded ? `<div class="cp-head"><div class="cp-logo"><span class="g">Cry</span><span class="i">pode</span></div>
+         <div class="cp-meta">${ar ? 'تاريخ الإصدار' : 'Generated'}: ${esc(date)}<br>crypode.com</div></div>` : '') +
+      (opts.title ? `<h1 class="cp-title">${esc(opts.title)}</h1>` : '') +
+      opts.bodyHtml +
+      (opts.branded && opts.disclaimer ? `<div class="cp-foot">${esc(opts.disclaimer)}</div>` : '');
+    document.body.classList.add('cp-printing');
+    const done = () => { document.body.classList.remove('cp-printing'); window.removeEventListener('afterprint', done); };
+    window.addEventListener('afterprint', done);
+    setTimeout(() => window.print(), 60);
+  }
 
-                <div style="background: var(--darker); padding: 15px; border-radius: 8px; margin: 15px 0;">
-                    <strong style="color: var(--gold);">Strategy Explanation:</strong>
-                    <p style="margin-top: 10px; color: var(--text);">${plan.strategy_explanation}</p>
-                </div>
+  function copy(text, btn, okLabel) {
+    const orig = btn ? btn.textContent : '';
+    const ok = () => { if (btn) { btn.textContent = okLabel || '✓ Copied'; setTimeout(() => { btn.textContent = orig; }, 2000); } };
+    const fallback = () => {
+      const ta = document.createElement('textarea'); ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy'); ok(); } catch (e) { alert('Please select the text and copy it manually.'); }
+      document.body.removeChild(ta);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(ok, fallback); else fallback();
+  }
 
-                <div class="payment-schedule">
-                    <h3>Payment Schedule (First 12 Months)</h3>
-                    ${plan.months.slice(0, 12).map((month, i) => `
-                        <div class="payment-month">
-                            <strong style="color: var(--gold);">Month ${month.month}</strong>
-                            <div style="margin-top: 8px;">
-                                ${month.debtsPaid.map(debt => `
-                                    <div class="payment-debt">
-                                        <span class="debt-name">${debt.name}</span>
-                                        <span class="debt-amount">${debt.payment.toFixed(2)}</span>
-                                        <span style="color: var(--text); opacity: 0.7;">Remaining: ${debt.remaining.toFixed(2)}</span>
-                                    </div>
-                                `).join('')}
-                                <div style="border-top: 1px dashed var(--gold); margin-top: 8px; padding-top: 8px; color: var(--gold); font-weight: 600;">
-                                    Total: ${month.totalPayment.toFixed(2)} ${selectedCurrency}
-                                </div>
-                            </div>
-                        </div>
-                    `).join('')}
-                </div>
-            `;
-        }
+  function download(filename, text) {
+    const url = URL.createObjectURL(new Blob([text], { type: 'text/plain;charset=utf-8' }));
+    const a = document.createElement('a'); a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
 
-        function showError(message) {
-            const resultsDiv = document.getElementById('resultsContainer');
-            resultsDiv.innerHTML = `<div class="error">${message}</div>`;
-        }
-    </script>
+  // Markdown → clean plain text for Copy / Download
+  function plain(text) {
+    return String(text || '').replace(/\r/g, '').split('\n').map(l => l
+      .replace(/^\s*#{1,6}\s+/, '')
+      .replace(/^\s*[-*]\s+/, '• ')
+      .replace(/^\s*(-{3,}|\*{3,}|_{3,})\s*$/, '')
+      .replace(/\*\*(.+?)\*\*/g, '$1').replace(/__(.+?)__/g, '$1')
+    ).join('\n').replace(/\n{3,}/g, '\n\n').trim();
+  }
+
+  return { print, md, plain, esc, copy, download };
+})();
+</script>
+<script>
+
+  const STRATS = {
+    snowball:  { name: 'Snowball',  icon: '🏔️', desc: 'Pay off the smallest balance first. Quick wins keep you motivated, and each cleared payment rolls into the next debt.' },
+    avalanche: { name: 'Avalanche', icon: '⛰️', desc: 'Pay off the highest rate first. This always costs the least in total, though the first debt may take longer to clear.' },
+    balanced:  { name: 'Balanced',  icon: '⚖️', desc: 'Prioritise debts that are both expensive and small, a middle ground between quick wins and the lowest total cost.' }
+  };
+  let currentStrategy = 'snowball', debtSeq = 0, lastPlan = null, lastInput = null;
+  const $ = id => document.getElementById(id);
+  const islamic = () => $('islamicMode').checked;
+  const word = () => islamic() ? 'profit' : 'interest';
+  const Word = () => islamic() ? 'Profit' : 'Interest';
+  const dp = c => ['OMR', 'KWD', 'BHD'].includes(c) ? 3 : 2;
+  const num = (n, c) => Number(n).toLocaleString('en-US', { minimumFractionDigits: dp(c), maximumFractionDigits: dp(c) });
+  const money = (n, c) => Number(n).toLocaleString('en-US', { minimumFractionDigits: dp(c), maximumFractionDigits: dp(c) }) + ' ' + c;
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+  const dur = m => { const y = Math.floor(m / 12), r = m % 12; return [y && `${y} year${y > 1 ? 's' : ''}`, r && `${r} month${r > 1 ? 's' : ''}`].filter(Boolean).join(' ') || '0 months'; };
+  const monthLabel = k => { const d = new Date(); d.setDate(1); d.setMonth(d.getMonth() + k); return d.toLocaleDateString('en-GB', { month: 'short', year: 'numeric' }); };
+
+  function addDebt(v = {}) {
+    const id = ++debtSeq, wrap = document.createElement('div');
+    wrap.className = 'debt-row'; wrap.dataset.id = id;
+    wrap.innerHTML = `
+      <div class="row-head"><span class="row-num">Debt</span><button type="button" class="remove" onclick="removeDebt(${id})">✕ Remove</button></div>
+      <div class="form-group"><label>Name</label><input type="text" class="d-name" placeholder="e.g. Car loan" value="${esc(v.name || '')}"></div>
+      <div class="form-row three">
+        <div class="form-group"><label>Balance</label><input type="number" class="d-balance" step="0.001" min="0" inputmode="decimal" placeholder="e.g. 8000" value="${v.balance ?? ''}"></div>
+        <div class="form-group"><label class="d-rate-label">Rate % / yr</label><input type="number" class="d-rate" step="0.01" min="0" inputmode="decimal" placeholder="e.g. 7.5" value="${v.rate ?? ''}"></div>
+        <div class="form-group"><label>Min. monthly</label><input type="number" class="d-min" step="0.001" min="0" inputmode="decimal" placeholder="e.g. 200" value="${v.min ?? ''}" oninput="updateMinTotal()"></div>
+      </div>`;
+    $('debtList').appendChild(wrap);
+    renumber(); refreshLabels();
+  }
+  function removeDebt(id) {
+    const rows = document.querySelectorAll('.debt-row');
+    if (rows.length <= 1) return;
+    document.querySelector(`.debt-row[data-id="${id}"]`).remove(); renumber(); updateMinTotal();
+  }
+  function renumber() {
+    const rows = document.querySelectorAll('.debt-row');
+    rows.forEach((r, i) => { r.querySelector('.row-num').textContent = 'Debt ' + (i + 1); r.querySelector('.remove').style.visibility = rows.length > 1 ? 'visible' : 'hidden'; });
+  }
+  function readDebts() {
+    return Array.from(document.querySelectorAll('.debt-row')).map((r, i) => ({
+      name: r.querySelector('.d-name').value.trim() || ('Debt ' + (i + 1)),
+      balance: parseFloat(r.querySelector('.d-balance').value), rate: parseFloat(r.querySelector('.d-rate').value),
+      min: parseFloat(r.querySelector('.d-min').value)
+    })).filter(d => !(isNaN(d.balance) && isNaN(d.rate) && isNaN(d.min)));
+  }
+  function updateMinTotal() {
+    const c = $('currency').value, t = readDebts().reduce((s, d) => s + (d.min > 0 ? d.min : 0), 0);
+    $('minTotal').innerHTML = t > 0 ? `Minimum payments add up to <strong>${money(t, c)}</strong> a month.` : '';
+  }
+  function refreshLabels() {
+    document.querySelectorAll('.d-rate-label').forEach(l => l.textContent = (islamic() ? 'Profit' : 'Rate') + ' % / yr');
+    updateMinTotal();
+  }
+  function selectStrategy(s) {
+    currentStrategy = s;
+    document.querySelectorAll('.strategy-btn').forEach(b => b.classList.toggle('active', b.dataset.s === s));
+    $('strategyDesc').textContent = STRATS[s].desc;
+  }
+  function resetForm() {
+    $('debtList').innerHTML = ''; debtSeq = 0; addDebt(); addDebt();
+    $('budget').value = ''; $('islamicMode').checked = false; $('currency').value = 'OMR';
+    selectStrategy('snowball'); refreshLabels(); lastPlan = null;
+    $('resultsContainer').innerHTML = '<p class="placeholder">Add your debts and monthly budget to see your personalised payoff plan</p>';
+  }
+  function showError(msg) { $('resultsContainer').innerHTML = `<div class="error">${msg}</div>`; }
+
+  function calculateDebtPayoff() {
+    const debts = readDebts(), budget = parseFloat($('budget').value), c = $('currency').value;
+    const plan = DebtEngine.plan(debts, budget, currentStrategy);
+    const minSum = debts.reduce((s, d) => s + (d.min > 0 ? d.min : 0), 0);
+    const E = {
+      noDebts: 'Please add at least one debt.',
+      balance: 'Please enter a balance for every debt.',
+      rate: `Please enter the ${word()} rate for every debt (use 0 if there is none).`,
+      min: 'Please enter the minimum monthly payment for every debt.',
+      budget: `Your monthly budget must be at least the total of your minimum payments (${money(minSum, c)}).`,
+      noProgress: `Your payments don't cover the monthly ${word()}, so the balance would never go down. Increase your budget or minimum payments.`
+    };
+    if (plan.error) return showError(E[plan.error]);
+    if (!plan.done) return showError('At this budget the debts would take more than 50 years to clear. Please increase your monthly budget.');
+    lastPlan = plan; lastInput = { debts, budget, c, strategy: currentStrategy, islamic: islamic() };
+    render();
+  }
+
+  function render() {
+    const p = lastPlan, { debts, budget, c, strategy } = lastInput, S = STRATS[strategy];
+    const principal = debts.reduce((s, d) => s + d.balance, 0);
+    const minPlan = p.compare.minimum;
+    const saved = minPlan && minPlan.done ? minPlan.totalInterest - p.totalInterest : null;
+    const monthsSaved = minPlan && minPlan.done ? minPlan.months - p.months : null;
+
+    let html = `
+      <div class="result-box">
+        <h3>Debt-free in ${dur(p.months)}</h3>
+        <div class="big-figure">${monthLabel(p.months)}</div>
+        <div class="big-sub">${S.icon} ${S.name} strategy · paying ${money(budget, c)} a month</div>
+        <div class="result-item"><span class="result-label">Total owed today</span><span class="result-value">${money(principal, c)}</span></div>
+        <div class="result-item"><span class="result-label">Total ${word()} you'll pay</span><span class="result-value">${money(p.totalInterest, c)}</span></div>
+        <div class="result-item"><span class="result-label">Total you'll pay</span><span class="result-value">${money(p.totalPaid, c)}</span></div>
+        ${saved !== null && (saved > 0.005 || monthsSaved > 0) ? `<div class="result-item"><span class="result-label">Compared with minimum payments only<small>${dur(minPlan.months)} and ${money(minPlan.totalInterest, c)} ${word()}</small></span><span class="result-value">Save ${money(saved, c)} · ${dur(monthsSaved)} sooner</span></div>` : ''}
+      </div>
+      <div class="result-box">
+        <h3>Your payoff order</h3>
+        <ol class="order-list">${p.order.map(o => `<li><span>${esc(o.name)}</span><span class="when">${monthLabel(o.month)} · month ${o.month}</span></li>`).join('')}</ol>
+      </div>
+      <div class="result-box">
+        <h3>Strategy comparison</h3>
+        <div class="table-scroll" style="max-height:none">
+          <table class="schedule-table">
+            <thead><tr><th>Strategy</th><th class="num">Debt-free in</th><th class="num">Total ${word()} (${c})</th></tr></thead>
+            <tbody>${['snowball', 'avalanche', 'balanced', 'minimum'].map(k => {
+              const r = p.compare[k]; if (!r) return '';
+              const label = k === 'minimum' ? 'Minimum payments only' : `${STRATS[k].icon} ${STRATS[k].name}`;
+              return `<tr class="${k === strategy ? 'chosen' : ''}"><td>${label}</td><td class="num">${r.done ? dur(r.months) : '50+ years'}</td><td class="num">${r.done ? num(r.totalInterest, c) : '—'}</td></tr>`;
+            }).join('')}</tbody>
+          </table>
+        </div>
+      </div>
+      <div class="result-box">
+        <h3>Month-by-month schedule</h3>
+        <div class="table-scroll">
+          <table class="schedule-table">
+            <thead><tr><th>Month</th><th class="num">Paid (${c})</th><th class="num">${Word()}</th><th class="num">Remaining</th></tr></thead>
+            <tbody>${p.schedule.map(r => `<tr><td style="white-space:nowrap">${monthLabel(r.month)}</td><td class="num">${num(r.paid, c)}</td><td class="num">${num(r.interest, c)}</td><td class="num">${num(r.remaining, c)}</td></tr>`).join('')}</tbody>
+          </table>
+        </div>
+      </div>`;
+    const notes = [];
+    if (lastInput.islamic) notes.push(`<li class="warn">In many Islamic financing contracts (such as murabaha), the total profit is fixed when you sign, so paying early may not reduce it unless your bank gives an early-settlement rebate (ibra'). Ask your bank for an early-settlement quote. Contracts that work on a reducing balance (such as diminishing musharakah or ijarah) behave like this plan.</li>`);
+    notes.push(`<li>This plan assumes your ${word()} rates stay the same, ${word()} is charged monthly on the remaining balance, and you pay the same total each month. Check early-payment rules and fees with each lender.</li>`);
+    notes.push('<li>When a debt is cleared, its minimum payment rolls into the next priority debt, so your monthly total stays the same until you are debt-free.</li>');
+    html += `<div class="result-box"><h3>Notes</h3><ul class="note-list">${notes.join('')}</ul></div>`;
+    lastHtml = html;
+    $('resultsContainer').innerHTML = html + `<div class="result-actions">
+      <button class="btn-primary" onclick="printPlan()">🖨️ Print / Save PDF</button>
+      <button class="btn-primary" onclick="downloadCsv()">⬇️ Download CSV</button></div>`;
+  }
+  let lastHtml = '';
+  function printPlan() {
+    CrypodePrint.print({ title: 'Debt Payoff Plan', bodyHtml: lastHtml, branded: true, lang: 'en', dir: 'ltr',
+      disclaimer: 'This plan is an estimate for guidance only and is not financial advice. Actual results depend on your lenders\u2019 terms, fees and any rate changes.' });
+  }
+  function downloadCsv() {
+    const { debts, c } = lastInput, q = v => `"${String(v).replace(/"/g, '""')}"`;
+    const head = ['Month', 'Date', 'Paid', Word(), 'Remaining total', ...debts.map(d => d.name + ' balance')];
+    const rows = lastPlan.schedule.map(r => [r.month, monthLabel(r.month), r.paid.toFixed(dp(c)), r.interest.toFixed(dp(c)), r.remaining.toFixed(dp(c)), ...r.balances.map(b => b.toFixed(dp(c)))]);
+    CrypodePrint.download('debt-payoff-plan.csv', [head, ...rows].map(r => r.map(q).join(',')).join('\n'));
+  }
+  document.addEventListener('DOMContentLoaded', () => { addDebt(); addDebt(); selectStrategy('snowball'); refreshLabels(); });
+</script>
+
 </body>
 </html>
