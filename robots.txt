@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+
+Sitemap: https://crypode-payoff-tool.vercel.app/sitemap.xml
